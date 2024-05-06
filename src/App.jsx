@@ -7,7 +7,7 @@ import { EditPage } from './pages/EditPage';
 import { RegisterPage } from './pages/RegisterPage';
 
 export const App = () => {
-  const currentUser = true;
+  const currentUser = false;
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
