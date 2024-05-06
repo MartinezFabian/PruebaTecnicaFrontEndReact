@@ -1,5 +1,6 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+  Alert,
   Button,
   FormControl,
   Grid,
@@ -12,8 +13,17 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
   // show / hide password functionality
   const [showPassword, setShowPassword] = useState(false);
 
@@ -22,6 +32,13 @@ export const LoginPage = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  // login functionality
+  const onSubmitForm = handleSubmit((data) => {
+    console.log(data);
+
+    reset();
+  });
 
   return (
     <Grid
@@ -62,7 +79,7 @@ export const LoginPage = () => {
           </Typography>
         </Grid>
 
-        <form>
+        <form onSubmit={onSubmitForm}>
           <Grid container>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
@@ -73,7 +90,15 @@ export const LoginPage = () => {
                 fullWidth
                 placeholder="Nombre de usuario"
                 name="username"
+                {...register('username', {
+                  required: { value: true, message: 'El nombre de usuario es requerido' },
+                })}
               />
+              {errors.username ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.username.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
@@ -87,6 +112,9 @@ export const LoginPage = () => {
                   autoComplete="current-password"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
+                  {...register('password', {
+                    required: { value: true, message: 'La contraseña es requerida' },
+                  })}
                   inputProps={{
                     'aria-label': 'password-input',
                   }}
@@ -104,13 +132,21 @@ export const LoginPage = () => {
                   }
                 />
               </FormControl>
+
+              {errors.password ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.password.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid container spacing={2} sx={{ marginBottom: 2, marginTop: 2 }}>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 2, sm: 1 } }}>
-                <Button variant="contained" fullWidth>
-                  Registrarte
-                </Button>
+                <Link to="/register">
+                  <Button variant="contained" fullWidth>
+                    Registrarte
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 1, sm: 2 } }}>
                 <Button type="submit" variant="contained" fullWidth>
