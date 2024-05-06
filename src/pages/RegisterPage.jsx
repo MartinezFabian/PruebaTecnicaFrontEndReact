@@ -1,5 +1,6 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+  Alert,
   Button,
   FormControl,
   Grid,
@@ -12,8 +13,18 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 export const RegisterPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm();
+
   // show / hide password functionality
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,6 +37,13 @@ export const RegisterPage = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  // register functionality
+  const onSubmitForm = handleSubmit((data) => {
+    console.log(data);
+
+    reset();
+  });
 
   return (
     <Grid
@@ -66,7 +84,7 @@ export const RegisterPage = () => {
           </Typography>
         </Grid>
 
-        <form>
+        <form onSubmit={onSubmitForm}>
           <Grid container>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
@@ -76,7 +94,27 @@ export const RegisterPage = () => {
                 fullWidth
                 placeholder="Nombre"
                 name="name"
+                {...register('name', {
+                  required: {
+                    value: true,
+                    message: 'El nombre es requerido',
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: 'El nombre no puede superar los 20 caracteres',
+                  },
+                  minLength: {
+                    value: 3,
+                    message: 'El nombre debe tener al menos 3 caracteres',
+                  },
+                })}
               />
+
+              {errors.name ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.name.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
@@ -87,7 +125,27 @@ export const RegisterPage = () => {
                 fullWidth
                 placeholder="Apellido"
                 name="lastname"
+                {...register('lastname', {
+                  required: {
+                    value: true,
+                    message: 'El apellido es requerido',
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: 'El apellido no puede superar los 20 caracteres',
+                  },
+                  minLength: {
+                    value: 3,
+                    message: 'El apellido debe tener al menos 3 caracteres',
+                  },
+                })}
               />
+
+              {errors.lastname ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.lastname.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
@@ -99,7 +157,16 @@ export const RegisterPage = () => {
                 fullWidth
                 placeholder="Nombre de usuario"
                 name="username"
+                {...register('username', {
+                  required: { value: true, message: 'El nombre de usuario es requerido' },
+                })}
               />
+
+              {errors.username ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.username.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
@@ -113,6 +180,13 @@ export const RegisterPage = () => {
                   autoComplete="current-password"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
+                  {...register('password', {
+                    required: { value: true, message: 'La contraseña es requerida' },
+                    minLength: {
+                      value: 6,
+                      message: 'La contraseña debe tener al menos 6 caracteres',
+                    },
+                  })}
                   inputProps={{
                     'aria-label': 'password-input',
                   }}
@@ -130,19 +204,30 @@ export const RegisterPage = () => {
                   }
                 />
               </FormControl>
+
+              {errors.password ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.password.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel htmlFor="outlined-adornment-password">Repetir Contraseña</InputLabel>
+                <InputLabel htmlFor="outlined-adornment-password2">Repetir Contraseña</InputLabel>
                 <OutlinedInput
                   label="Repetir Contraseña"
                   placeholder="Repetir Contraseña"
-                  id="outlined-adornment-password"
+                  id="outlined-adornment-password2"
                   variant="outlined"
                   autoComplete="current-password"
                   type={showRepeatPassword ? 'text' : 'password'}
-                  name="password-repeat"
+                  name="passwordRepeat"
+                  {...register('passwordRepeat', {
+                    required: { value: true, message: 'Confirmar la contraseña es requerido' },
+                    validate: (value) =>
+                      value === watch('password') ? true : 'Las contraseñas no coinciden',
+                  })}
                   inputProps={{
                     'aria-label': 'password-input',
                   }}
@@ -160,13 +245,21 @@ export const RegisterPage = () => {
                   }
                 />
               </FormControl>
+
+              {errors.passwordRepeat ? (
+                <Alert sx={{ marginTop: 2 }} severity="warning">
+                  {errors.passwordRepeat.message}
+                </Alert>
+              ) : null}
             </Grid>
 
             <Grid container spacing={2} sx={{ marginBottom: 2, marginTop: 2 }}>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 2, sm: 1 } }}>
-                <Button variant="contained" fullWidth>
-                  Iniciar sesión
-                </Button>
+                <Link to="/login">
+                  <Button variant="contained" fullWidth>
+                    Iniciar sesión
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 1, sm: 2 } }}>
                 <Button type="submit" variant="contained" fullWidth>
