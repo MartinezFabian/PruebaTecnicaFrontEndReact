@@ -59,6 +59,8 @@ export const HomePage = () => {
       label: 'Alergias',
       minWidth: 100,
       maxWidth: 120,
+
+      format: (value) => (value.length > 0 ? value : 'Ninguna'),
     },
     {
       id: 'locality',
@@ -81,9 +83,9 @@ export const HomePage = () => {
           overflow="auto"
         >
           <Button
-            variant="outlined"
+            variant="contained"
             size="small"
-            color="primary"
+            color="secondary"
             startIcon={<ArrowForwardIcon></ArrowForwardIcon>}
             onClick={() => onDetailsPatient(row.id)}
           >
@@ -91,9 +93,9 @@ export const HomePage = () => {
           </Button>
 
           <Button
-            variant="outlined"
+            variant="contained"
             size="small"
-            color="primary"
+            color="secondary"
             startIcon={<EditIcon></EditIcon>}
             onClick={() => onEditPatient(row.id)}
           >
@@ -120,7 +122,7 @@ export const HomePage = () => {
       id: 1,
       fullName: 'Fabian Martinez',
       dateOfBirth: '24/05/2001',
-      allergies: 'Ninguna',
+      allergies: '',
       locality: 'Chaco',
     },
     {
@@ -134,7 +136,7 @@ export const HomePage = () => {
       id: 3,
       fullName: 'Montero Juan',
       dateOfBirth: '09/04/2000',
-      allergies: 'Ninguna',
+      allergies: '',
       locality: 'Corrientes',
     },
   ];
@@ -220,15 +222,29 @@ export const HomePage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    {columns.map((column) => (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format ? column.format(row[column.id], row) : row[column.id]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.id}
+                      sx={{
+                        bgcolor: row.allergies.length > 0 ? 'rgb(251 226 172)' : 'inherit',
+                        '&:hover': {
+                          bgcolor:
+                            row.allergies.length > 0 ? 'rgb(251 226 172) !important' : 'inherit',
+                        },
+                      }}
+                    >
+                      {columns.map((column) => (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format ? column.format(row[column.id], row) : row[column.id]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
