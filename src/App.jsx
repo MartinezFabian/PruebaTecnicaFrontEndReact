@@ -8,7 +8,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { AddPatient } from './pages/AddPatient';
 
 export const App = () => {
-  const currentUser = true;
+  const currentUser = false;
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
