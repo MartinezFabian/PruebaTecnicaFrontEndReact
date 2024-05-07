@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Alert, Button, Grid, InputLabel, TextField, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export const AddPatient = () => {
   const {
@@ -133,8 +134,28 @@ export const AddPatient = () => {
             </Grid>
 
             <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
-              <Button type="submit" size="large" color="primary" variant="contained" xs={12} sm={6}>
-                Agregar Paciente
+              <Link to="/">
+                <Button
+                  size="medium"
+                  color="secondary"
+                  variant="contained"
+                  xs={12}
+                  sm={6}
+                  sx={{ marginRight: 2 }}
+                >
+                  Cancelar
+                </Button>
+              </Link>
+
+              <Button
+                type="submit"
+                size="medium"
+                color="secondary"
+                variant="contained"
+                xs={12}
+                sm={6}
+              >
+                Agregar
               </Button>
             </Grid>
           </Grid>

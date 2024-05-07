@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import { Avatar, ListItemIcon, Menu, MenuItem, Toolbar, Tooltip } from '@mui/material';
 import Logout from '@mui/icons-material/Logout';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,9 +26,11 @@ export const Navbar = () => {
           paddingX: { xs: 3, md: 5, lg: 10 },
         }}
       >
-        <Typography fontSize={{ xs: '22px', sm: '22px' }} variant="h6" noWrap component="div">
-          Pacientes
-        </Typography>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Typography fontSize={{ xs: '22px', sm: '22px' }} variant="h6" noWrap>
+            Pacientes
+          </Typography>
+        </Link>
 
         <Tooltip title="Cuenta">
           <IconButton
