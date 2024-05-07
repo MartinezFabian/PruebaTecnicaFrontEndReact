@@ -19,7 +19,11 @@ export const Navbar = () => {
   return (
     <AppBar position="fixed">
       <Toolbar
-        sx={{ display: 'flex', justifyContent: 'space-between', paddingX: { xs: 2, sm: 6 } }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          paddingX: { xs: 3, md: 5, lg: 10 },
+        }}
       >
         <Typography fontSize={{ xs: '22px', sm: '22px' }} variant="h6" noWrap component="div">
           Pacientes

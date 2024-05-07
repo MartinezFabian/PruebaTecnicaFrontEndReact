@@ -5,9 +5,10 @@ import { LoginPage } from './pages/LoginPage';
 import { Layout } from './ui/Layout';
 import { EditPage } from './pages/EditPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { AddPatient } from './pages/AddPatient';
 
 export const App = () => {
-  const currentUser = false;
+  const currentUser = true;
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
@@ -37,6 +38,10 @@ export const App = () => {
         {
           path: '/edit/:id',
           element: <EditPage></EditPage>,
+        },
+        {
+          path: '/add-patient',
+          element: <AddPatient></AddPatient>,
         },
       ],
     },
