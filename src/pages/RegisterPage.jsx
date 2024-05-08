@@ -2,6 +2,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Alert,
   Button,
+  CircularProgress,
   FormControl,
   Grid,
   IconButton,
@@ -9,14 +10,30 @@ import {
   InputLabel,
   OutlinedInput,
   Paper,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { registerUser } from '../store/thunks/auth/registerUser';
+import { AUTH_STATUS } from '../store/slices/auth/authStatus';
+import { resetErrorMessage } from '../store/slices/auth/authSlice';
 
 export const RegisterPage = () => {
+  // error snackbar functionality
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnackbar(false);
+  };
+
   const {
     register,
     handleSubmit,
@@ -24,6 +41,26 @@ export const RegisterPage = () => {
     watch,
     reset,
   } = useForm();
+
+  // register functionality
+  const dispatch = useDispatch();
+  const { status, errorMessage } = useSelector((state) => state.auth);
+
+  const isChecking = useMemo(() => status === AUTH_STATUS.CHECKING, [status]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      setOpenErrorSnackbar(true);
+    } else {
+      setOpenErrorSnackbar(false);
+    }
+  }, [errorMessage]);
+
+  const onSubmitForm = handleSubmit((data) => {
+    dispatch(registerUser(data));
+
+    reset();
+  });
 
   // show / hide password functionality
   const [showPassword, setShowPassword] = useState(false);
@@ -37,13 +74,6 @@ export const RegisterPage = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-
-  // register functionality
-  const onSubmitForm = handleSubmit((data) => {
-    console.log(data);
-
-    reset();
-  });
 
   return (
     <Grid
@@ -88,62 +118,31 @@ export const RegisterPage = () => {
           <Grid container>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
-                label="Nombre"
+                label="Nombre completo"
                 type="text"
                 variant="outlined"
                 fullWidth
-                placeholder="Nombre"
-                name="name"
-                {...register('name', {
+                placeholder="Nombre completo"
+                name="fullName"
+                {...register('fullName', {
                   required: {
                     value: true,
-                    message: 'El nombre es requerido',
+                    message: 'El nombre completo es requerido',
                   },
                   maxLength: {
                     value: 20,
-                    message: 'El nombre no puede superar los 20 caracteres',
+                    message: 'El nombre completo no puede superar los 20 caracteres',
                   },
                   minLength: {
                     value: 3,
-                    message: 'El nombre debe tener al menos 3 caracteres',
+                    message: 'El nombre completo debe tener al menos 3 caracteres',
                   },
                 })}
               />
 
-              {errors.name ? (
+              {errors.fullName ? (
                 <Alert sx={{ marginTop: 2 }} severity="warning">
-                  {errors.name.message}
-                </Alert>
-              ) : null}
-            </Grid>
-
-            <Grid item xs={12} sx={{ marginTop: 2 }}>
-              <TextField
-                label="Apellido"
-                type="text"
-                variant="outlined"
-                fullWidth
-                placeholder="Apellido"
-                name="lastname"
-                {...register('lastname', {
-                  required: {
-                    value: true,
-                    message: 'El apellido es requerido',
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: 'El apellido no puede superar los 20 caracteres',
-                  },
-                  minLength: {
-                    value: 3,
-                    message: 'El apellido debe tener al menos 3 caracteres',
-                  },
-                })}
-              />
-
-              {errors.lastname ? (
-                <Alert sx={{ marginTop: 2 }} severity="warning">
-                  {errors.lastname.message}
+                  {errors.fullName.message}
                 </Alert>
               ) : null}
             </Grid>
@@ -256,19 +255,43 @@ export const RegisterPage = () => {
             <Grid container spacing={2} sx={{ marginBottom: 2, marginTop: 2 }}>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 2, sm: 1 } }}>
                 <Link to="/login">
-                  <Button variant="contained" fullWidth>
+                  <Button
+                    onClick={() => dispatch(resetErrorMessage())}
+                    variant="contained"
+                    fullWidth
+                  >
                     Iniciar sesión
                   </Button>
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 1, sm: 2 } }}>
-                <Button type="submit" variant="contained" fullWidth>
+                <Button type="submit" disabled={isChecking} variant="contained" fullWidth>
                   Crear cuenta
                 </Button>
               </Grid>
             </Grid>
           </Grid>
         </form>
+        {isChecking ? (
+          <Grid container sx={{ marginTop: 2 }}>
+            <CircularProgress sx={{ margin: 'auto' }} color="secondary" />
+          </Grid>
+        ) : null}
+
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseErrorSnackbar}
+        >
+          <Alert
+            onClose={handleCloseErrorSnackbar}
+            severity="error"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
       </Paper>
     </Grid>
   );

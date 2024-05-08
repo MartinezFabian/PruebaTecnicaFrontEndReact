@@ -6,13 +6,25 @@ import { Layout } from './ui/Layout';
 import { EditPage } from './pages/EditPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { AddPatient } from './pages/AddPatient';
+import { useSelector } from 'react-redux';
+import { AUTH_STATUS } from './store/slices/auth/authStatus';
 
 export const App = () => {
-  const currentUser = false;
+  const { status } = useSelector((state) => state.auth);
+
+  const currentUser = status === AUTH_STATUS.AUTHENTICATED ? true : false;
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
       return <Navigate to="/login"></Navigate>;
+    }
+
+    return children;
+  };
+
+  const AuthProtectedRoute = ({ children }) => {
+    if (currentUser) {
+      return <Navigate to="/"></Navigate>;
     }
 
     return children;
@@ -47,11 +59,19 @@ export const App = () => {
     },
     {
       path: '/login',
-      element: <LoginPage></LoginPage>,
+      element: (
+        <AuthProtectedRoute>
+          <LoginPage></LoginPage>,
+        </AuthProtectedRoute>
+      ),
     },
     {
       path: '/register',
-      element: <RegisterPage></RegisterPage>,
+      element: (
+        <AuthProtectedRoute>
+          <RegisterPage></RegisterPage>
+        </AuthProtectedRoute>
+      ),
     },
   ]);
 
