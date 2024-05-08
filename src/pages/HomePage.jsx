@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   Alert,
@@ -55,9 +55,32 @@ export const HomePage = () => {
   };
 
   const dispatch = useDispatch();
+
   const { patientsList, isLoading, errorMessage, successMessage } = useSelector(
     (state) => state.patients
   );
+
+  //  patient list filter functionalities
+  const [searchValue, setSearchValue] = useState('');
+
+  const onSearchValueChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  let filteredPatientsList = useMemo(() => {
+    return patientsList
+      .filter((patient) => {
+        return patient.fullName.toLowerCase().includes(searchValue.toLowerCase());
+      })
+      .sort((a, b) => {
+        // Convert fullNames to lowercase
+        const fullNameA = a.fullName.toLowerCase();
+        const fullNameB = b.fullName.toLowerCase();
+
+        // Sort alphabetically using localeCompare
+        return fullNameA.localeCompare(fullNameB);
+      });
+  }, [patientsList, searchValue]);
 
   // navigation's and actions handlers functionalities
 
@@ -203,6 +226,8 @@ export const HomePage = () => {
 
         <TextField
           type="search"
+          value={searchValue}
+          onChange={onSearchValueChange}
           label="Buscar paciente por nombre"
           variant="outlined"
           size="small"
@@ -219,7 +244,7 @@ export const HomePage = () => {
 
       {errorMessage ? (
         <Alert severity="error">{errorMessage}</Alert>
-      ) : patientsList.length === 0 ? (
+      ) : filteredPatientsList.length === 0 ? (
         <Grid
           container
           spacing={0}
@@ -256,7 +281,7 @@ export const HomePage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {patientsList
+                {filteredPatientsList
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     return (
@@ -287,7 +312,7 @@ export const HomePage = () => {
           <TablePagination
             rowsPerPageOptions={[10, 25]}
             component="div"
-            count={patientsList.length}
+            count={filteredPatientsList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
