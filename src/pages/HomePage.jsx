@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -17,8 +17,10 @@ import {
   TextField,
   Typography,
   InputAdornment,
+  Snackbar,
 } from '@mui/material';
 
+import AlertDialog from '../components/AlertDialog';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
@@ -27,11 +29,35 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import RedoIcon from '@mui/icons-material/Redo';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedPatient } from '../store/slices/patients/patientsSlice';
+import { deletePatient, setSelectedPatient } from '../store/slices/patients/patientsSlice';
 
 export const HomePage = () => {
+  // show snackbar successfully deleted patient
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+
+  const handleCloseSuccessSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSuccessSnackbar(false);
+  };
+
+  // show snackbar error deleted patient
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true);
+
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnackbar(false);
+  };
+
   const dispatch = useDispatch();
-  const { patientsList, isLoading, errorMessage } = useSelector((state) => state.patients);
+  const { patientsList, isLoading, errorMessage, successMessage } = useSelector(
+    (state) => state.patients
+  );
 
   // navigation's and actions handlers functionalities
 
@@ -53,9 +79,31 @@ export const HomePage = () => {
     navigate(`/details/${patient.id}`);
   };
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
+
   const onDeletePatient = (id) => {
-    console.log(id);
+    setIdToDelete(id);
+    setShowDialog(true);
   };
+
+  const onConfirmDialog = () => {
+    dispatch(deletePatient(idToDelete));
+    setOpenSuccessSnackbar(true);
+  };
+
+  const onCloseDialog = () => {
+    setShowDialog(false);
+    setIdToDelete(null);
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      setOpenErrorSnackbar(true);
+    } else {
+      setOpenErrorSnackbar(false);
+    }
+  }, [errorMessage]);
 
   /* columns format */
 
@@ -118,7 +166,7 @@ export const HomePage = () => {
             size="small"
             color="error"
             startIcon={<DeleteIcon></DeleteIcon>}
-            onClick={() => console.log(row.id)}
+            onClick={() => onDeletePatient(row.id)}
           >
             Eliminar
           </Button>
@@ -261,6 +309,40 @@ export const HomePage = () => {
         <AddIcon sx={{ mr: 1 }}></AddIcon>
         Agregar paciente
       </Fab>
+
+      <AlertDialog
+        open={showDialog}
+        title="¿Estas seguro de eliminar al paciente?"
+        description="Si eliminas al paciente, no podrás recuperar los datos. Y perderás toda su información asociada."
+        onClose={onCloseDialog}
+        onConfirm={onConfirmDialog}
+      />
+
+      <Snackbar
+        open={openSuccessSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSuccessSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSuccessSnackbar}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={openErrorSnackbar} autoHideDuration={6000} onClose={handleCloseErrorSnackbar}>
+        <Alert
+          onClose={handleCloseErrorSnackbar}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };
