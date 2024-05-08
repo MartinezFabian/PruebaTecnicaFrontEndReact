@@ -30,6 +30,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import RedoIcon from '@mui/icons-material/Redo';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePatient, setSelectedPatient } from '../store/slices/patients/patientsSlice';
+import moment from 'moment';
 
 export const HomePage = () => {
   // show snackbar successfully deleted patient
@@ -135,6 +136,10 @@ export const HomePage = () => {
     {
       id: 'dateOfBirth',
       label: 'Fecha de nacimiento',
+
+      format: (value) => {
+        return moment.utc(value).format('DD/MM/YYYY');
+      },
     },
     {
       id: 'allergies',

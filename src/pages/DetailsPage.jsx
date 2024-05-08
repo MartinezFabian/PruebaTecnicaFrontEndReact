@@ -2,6 +2,8 @@ import { Alert, Button, Grid, List, ListItem, ListItemText } from '@mui/material
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { resetSelectedPatient } from '../store/slices/patients/patientsSlice';
+import moment from 'moment';
+import { calculateAge } from '../utils/calculateAge';
 
 export const DetailsPage = () => {
   const dispatch = useDispatch();
@@ -40,7 +42,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Fecha de nacimiento"
-            secondary={selectedPatient.dateOfBirth}
+            secondary={moment.utc(selectedPatient.dateOfBirth).format('DD/MM/YYYY')}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -48,7 +50,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Edad"
-            secondary="???" // TODO: calculate age based on date of birth
+            secondary={calculateAge(selectedPatient.dateOfBirth)}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
