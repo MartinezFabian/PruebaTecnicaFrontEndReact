@@ -6,13 +6,23 @@ import { Layout } from './ui/Layout';
 import { EditPage } from './pages/EditPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { AddPatient } from './pages/AddPatient';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_STATUS } from './store/slices/auth/authStatus';
+import { useEffect } from 'react';
+import { fetchPatients } from './store/thunks/patients/fetchPatients';
 
 export const App = () => {
   const { status } = useSelector((state) => state.auth);
 
   const currentUser = status === AUTH_STATUS.AUTHENTICATED ? true : false;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchPatients());
+    }
+  }, [currentUser]);
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {

@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 const initialState = {
   patientsList: [],
   isLoading: false,
@@ -44,3 +46,13 @@ export const patientsSlice = createSlice({
     },
   },
 });
+
+export const {
+  fetchPatientsRequest,
+  fetchPatientsSuccess,
+  fetchPatientsFailure,
+  addPatient,
+  updatePatient,
+  deletePatient,
+  setSelectedPatient,
+} = patientsSlice.actions;

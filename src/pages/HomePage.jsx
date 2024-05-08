@@ -25,10 +25,11 @@ import AddIcon from '@mui/icons-material/Add';
 import Fab from '@mui/material/Fab';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
+import RedoIcon from '@mui/icons-material/Redo';
+import { useSelector } from 'react-redux';
 
 export const HomePage = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const { patientsList, isLoading, error } = useSelector((state) => state.patients);
 
   /* navigation's */
 
@@ -116,31 +117,6 @@ export const HomePage = () => {
     },
   ];
 
-  /* test data */
-  const rows = [
-    {
-      id: 1,
-      fullName: 'Fabian Martinez',
-      dateOfBirth: '2001-05-24',
-      allergies: '',
-      locality: 'Chaco',
-    },
-    {
-      id: 2,
-      fullName: 'Alvarez Juan Carlos',
-      dateOfBirth: '2000-04-09',
-      allergies: 'Penicilina, Polen',
-      locality: 'Santo Tome',
-    },
-    {
-      id: 3,
-      fullName: 'Montero Juan',
-      dateOfBirth: '2000-04-09',
-      allergies: '',
-      locality: 'Corrientes',
-    },
-  ];
-
   /* pagination */
 
   const [page, setPage] = useState(0);
@@ -183,14 +159,16 @@ export const HomePage = () => {
         />
       </Grid>
 
-      {rows.length === 0 ? (
+      {error ? (
+        <Alert severity="error">{error}</Alert>
+      ) : patientsList.length === 0 ? (
         <Grid
           container
           spacing={0}
           direction="column"
           alignItems="center"
           justifyContent="center"
-          sx={{ minHeight: '94vh' }}
+          sx={{ minHeight: '50vh' }}
         >
           <Grid item xs={12}>
             <Typography variant="h5">Agrega un nuevo paciente</Typography>
@@ -200,8 +178,6 @@ export const HomePage = () => {
             <RedoIcon sx={{ fontSize: '120px', color: 'primary.main' }}></RedoIcon>
           </Grid>
         </Grid>
-      ) : error ? (
-        <Alert severity="error">Error</Alert>
       ) : isLoading ? (
         <CircularProgress sx={{ margin: 'auto' }} color="primary" />
       ) : (
@@ -222,36 +198,38 @@ export const HomePage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.id}
-                      sx={{
-                        bgcolor: row.allergies.length > 0 ? 'rgb(251 226 172)' : 'inherit',
-                        '&:hover': {
-                          bgcolor:
-                            row.allergies.length > 0 ? 'rgb(251 226 172) !important' : 'inherit',
-                        },
-                      }}
-                    >
-                      {columns.map((column) => (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format ? column.format(row[column.id], row) : row[column.id]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
+                {patientsList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                        sx={{
+                          bgcolor: row.allergies.length > 0 ? 'rgb(251 226 172)' : 'inherit',
+                          '&:hover': {
+                            bgcolor:
+                              row.allergies.length > 0 ? 'rgb(251 226 172) !important' : 'inherit',
+                          },
+                        }}
+                      >
+                        {columns.map((column) => (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format ? column.format(row[column.id], row) : row[column.id]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
             rowsPerPageOptions={[10, 25]}
             component="div"
-            count={rows.length}
+            count={patientsList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
