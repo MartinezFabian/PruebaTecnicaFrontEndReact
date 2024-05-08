@@ -26,12 +26,14 @@ import Fab from '@mui/material/Fab';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import RedoIcon from '@mui/icons-material/Redo';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedPatient } from '../store/slices/patients/patientsSlice';
 
 export const HomePage = () => {
-  const { patientsList, isLoading, error } = useSelector((state) => state.patients);
+  const dispatch = useDispatch();
+  const { patientsList, isLoading, errorMessage } = useSelector((state) => state.patients);
 
-  /* navigation's */
+  // navigation's and actions handlers functionalities
 
   const navigate = useNavigate();
 
@@ -39,12 +41,18 @@ export const HomePage = () => {
     navigate('/add-patient');
   };
 
-  const onEditPatient = (objectId) => {
-    navigate(`/edit/${objectId}`);
+  const onEditPatient = (patient) => {
+    console.log(patient);
+    navigate(`/edit/${patient.id}`);
   };
 
-  const onDetailsPatient = (objectId) => {
-    navigate(`/details/${objectId}`);
+  const onDetailsPatient = (patient) => {
+    dispatch(setSelectedPatient(patient));
+    navigate(`/details/${patient.id}`);
+  };
+
+  const onDeletePatient = (id) => {
+    console.log(id);
   };
 
   /* columns format */
@@ -88,7 +96,7 @@ export const HomePage = () => {
             size="small"
             color="secondary"
             startIcon={<ArrowForwardIcon></ArrowForwardIcon>}
-            onClick={() => onDetailsPatient(row.id)}
+            onClick={() => onDetailsPatient(row)}
           >
             Detalles
           </Button>
@@ -98,7 +106,7 @@ export const HomePage = () => {
             size="small"
             color="secondary"
             startIcon={<EditIcon></EditIcon>}
-            onClick={() => onEditPatient(row.id)}
+            onClick={() => onEditPatient(row)}
           >
             Editar
           </Button>
@@ -159,8 +167,8 @@ export const HomePage = () => {
         />
       </Grid>
 
-      {error ? (
-        <Alert severity="error">{error}</Alert>
+      {errorMessage ? (
+        <Alert severity="error">{errorMessage}</Alert>
       ) : patientsList.length === 0 ? (
         <Grid
           container

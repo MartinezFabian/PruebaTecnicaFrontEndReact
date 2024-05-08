@@ -1,16 +1,15 @@
-import { Button, Grid, List, ListItem, ListItemText } from '@mui/material';
+import { Alert, Button, Grid, List, ListItem, ListItemText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { resetSelectedPatient } from '../store/slices/patients/patientsSlice';
 
 export const DetailsPage = () => {
-  const patient = {
-    id: 1,
-    fullName: 'Fabian Martinez',
-    dateOfBirth: '2001-05-24',
-    allergies: '',
-    locality: 'Chaco',
-  };
+  const dispatch = useDispatch();
+  const { selectedPatient, errorMessage } = useSelector((state) => state.patients);
 
-  return (
+  return errorMessage ? (
+    <Alert severity="error">{errorMessage}</Alert>
+  ) : (
     <Grid
       container
       spacing={0}
@@ -33,7 +32,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Apellido y Nombre"
-            secondary={patient.fullName}
+            secondary={selectedPatient.fullName}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -41,7 +40,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Fecha de nacimiento"
-            secondary={patient.dateOfBirth}
+            secondary={selectedPatient.dateOfBirth}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -49,7 +48,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Edad"
-            secondary="22"
+            secondary="???" // TODO: calculate age based on date of birth
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -57,7 +56,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Localidad"
-            secondary={patient.locality}
+            secondary={selectedPatient.locality}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -65,7 +64,7 @@ export const DetailsPage = () => {
         <ListItem>
           <ListItemText
             primary="Alergias"
-            secondary={patient.allergies ? patient.allergies : 'Ninguna'}
+            secondary={selectedPatient.allergies ? selectedPatient.allergies : 'Ninguna'}
             primaryTypographyProps={{ style: { fontSize: '20px' } }}
             secondaryTypographyProps={{ style: { fontSize: '16px' } }}
           />
@@ -73,6 +72,7 @@ export const DetailsPage = () => {
 
         <Link to="/">
           <Button
+            onClick={() => dispatch(resetSelectedPatient())}
             size="medium"
             color="secondary"
             variant="contained"

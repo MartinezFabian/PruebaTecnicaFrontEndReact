@@ -1,10 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialSelectedPatient = {
+  fullName: '',
+  dateOfBirth: new Date().toISOString().split('T')[0],
+  allergies: '',
+  locality: '',
+};
+
 const initialState = {
   patientsList: [],
   isLoading: false,
-  error: null,
-  selectedPatient: null,
+  errorMessage: null,
+  successMessage: null,
+  selectedPatient: initialSelectedPatient,
 };
 
 export const patientsSlice = createSlice({
@@ -13,36 +21,53 @@ export const patientsSlice = createSlice({
   reducers: {
     fetchPatientsRequest: (state) => {
       state.isLoading = true;
-      state.error = null;
+      state.errorMessage = null;
     },
     fetchPatientsSuccess: (state, action) => {
       state.isLoading = false;
       state.patientsList = action.payload;
-      state.error = null;
+      state.errorMessage = null;
     },
     fetchPatientsFailure: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.errorMessage = action.payload;
     },
     addPatient: (state, action) => {
       state.patientsList.push(action.payload);
+      state.errorMessage = null;
+      state.successMessage = 'Paciente agregado correctamente';
     },
     updatePatient: (state, action) => {
-      state.patientsList.map((patient) => {
+      state.patientsList = state.patientsList.map((patient) => {
         if (patient.id === action.payload.id) {
           return action.payload;
         }
 
         return patient;
       });
+
+      state.successMessage = 'Paciente actualizado correctamente';
+      state.selectedPatient = initialSelectedPatient;
+      state.errorMessage = null;
     },
 
     deletePatient: (state, action) => {
       state.patientsList = state.patientsList.filter((patient) => patient.id !== action.payload);
+
+      state.successMessage = 'Paciente eliminado correctamente';
+      state.error = null;
     },
 
     setSelectedPatient: (state, action) => {
       state.selectedPatient = action.payload;
+
+      state.errorMessage = null;
+    },
+
+    resetSelectedPatient: (state) => {
+      state.selectedPatient = initialSelectedPatient;
+
+      state.errorMessage = null;
     },
   },
 });
@@ -55,4 +80,5 @@ export const {
   updatePatient,
   deletePatient,
   setSelectedPatient,
+  resetSelectedPatient,
 } = patientsSlice.actions;
