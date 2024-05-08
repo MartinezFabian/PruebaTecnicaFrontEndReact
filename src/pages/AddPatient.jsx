@@ -1,8 +1,38 @@
 import { useForm } from 'react-hook-form';
-import { Alert, Button, Grid, InputLabel, TextField, Typography } from '@mui/material';
+import { Alert, Button, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPatient } from '../store/slices/patients/patientsSlice';
+import { useEffect, useState } from 'react';
 
 export const AddPatient = () => {
+  // show snackbar successfully added patient
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+
+  const handleCloseSuccessSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSuccessSnackbar(false);
+  };
+
+  // show snackbar error added patient
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true);
+
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnackbar(false);
+  };
+
+  // add patient functionality
+
+  const dispatch = useDispatch();
+  const { patientsList, errorMessage, successMessage } = useSelector((state) => state.patients);
+
   const {
     register,
     handleSubmit,
@@ -11,10 +41,19 @@ export const AddPatient = () => {
   } = useForm();
 
   const onFormSubmit = handleSubmit((data) => {
-    console.log(data);
+    dispatch(addPatient({ id: patientsList.length + 1, ...data }));
 
+    setOpenSuccessSnackbar(true);
     reset();
   });
+
+  useEffect(() => {
+    if (errorMessage) {
+      setOpenErrorSnackbar(true);
+    } else {
+      setOpenErrorSnackbar(false);
+    }
+  }, [errorMessage]);
 
   return (
     <Grid
@@ -143,7 +182,7 @@ export const AddPatient = () => {
                   sm={6}
                   sx={{ marginRight: 2 }}
                 >
-                  Cancelar
+                  Volver
                 </Button>
               </Link>
 
@@ -160,6 +199,36 @@ export const AddPatient = () => {
             </Grid>
           </Grid>
         </form>
+
+        <Snackbar
+          open={openSuccessSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSuccessSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSuccessSnackbar}
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {successMessage}
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseErrorSnackbar}
+        >
+          <Alert
+            onClose={handleCloseErrorSnackbar}
+            severity="error"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
       </Grid>
     </Grid>
   );
