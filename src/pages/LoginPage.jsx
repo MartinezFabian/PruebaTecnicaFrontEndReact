@@ -2,6 +2,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Alert,
   Button,
+  CircularProgress,
   FormControl,
   Grid,
   IconButton,
@@ -9,20 +10,56 @@ import {
   InputLabel,
   OutlinedInput,
   Paper,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { loginUser } from '../store/thunks/auth/loginUser';
+import { AUTH_STATUS } from '../store/slices/auth/authStatus';
 
 export const LoginPage = () => {
+  // error snackbar functionality
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnackbar(false);
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
+
+  // login functionality
+
+  const dispatch = useDispatch();
+  const { status, errorMessage } = useSelector((state) => state.auth);
+
+  const isChecking = useMemo(() => status === AUTH_STATUS.CHECKING, [status]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      setOpenErrorSnackbar(true);
+    } else {
+      setOpenErrorSnackbar(false);
+    }
+  }, [errorMessage]);
+
+  const onSubmitForm = handleSubmit((data) => {
+    dispatch(loginUser(data));
+
+    reset();
+  });
 
   // show / hide password functionality
   const [showPassword, setShowPassword] = useState(false);
@@ -32,13 +69,6 @@ export const LoginPage = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-
-  // login functionality
-  const onSubmitForm = handleSubmit((data) => {
-    console.log(data);
-
-    reset();
-  });
 
   return (
     <Grid
@@ -156,6 +186,27 @@ export const LoginPage = () => {
             </Grid>
           </Grid>
         </form>
+
+        {isChecking ? (
+          <Grid container sx={{ marginTop: 2 }}>
+            <CircularProgress sx={{ margin: 'auto' }} color="secondary" />
+          </Grid>
+        ) : null}
+
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseErrorSnackbar}
+        >
+          <Alert
+            onClose={handleCloseErrorSnackbar}
+            severity="error"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
       </Paper>
     </Grid>
   );
