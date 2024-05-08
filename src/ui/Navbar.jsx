@@ -5,8 +5,15 @@ import { Avatar, ListItemIcon, Menu, MenuItem, Toolbar, Tooltip } from '@mui/mat
 import Logout from '@mui/icons-material/Logout';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../store/thunks/auth/logoutUser';
 
 export const Navbar = () => {
+  const dispatch = useDispatch();
+  const {
+    user: { fullName },
+  } = useSelector((state) => state.auth);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -41,7 +48,7 @@ export const Navbar = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>F</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }}>{fullName.charAt(0).toUpperCase()}</Avatar>
           </IconButton>
         </Tooltip>
 
@@ -80,7 +87,7 @@ export const Navbar = () => {
           transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          <MenuItem>
+          <MenuItem onClick={() => dispatch(logoutUser())}>
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>
