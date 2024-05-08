@@ -42,12 +42,14 @@ export const HomePage = () => {
   };
 
   const onEditPatient = (patient) => {
-    console.log(patient);
+    dispatch(setSelectedPatient(patient));
+
     navigate(`/edit/${patient.id}`);
   };
 
   const onDetailsPatient = (patient) => {
     dispatch(setSelectedPatient(patient));
+
     navigate(`/details/${patient.id}`);
   };
 

@@ -1,28 +1,57 @@
 import { useForm } from 'react-hook-form';
-import { Alert, Button, Grid, InputLabel, TextField, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Alert, Button, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { resetSelectedPatient, updatePatient } from '../store/slices/patients/patientsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 export const EditPage = () => {
+  // show snackbar successfully updated patient
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+
+  const handleCloseSuccessSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSuccessSnackbar(false);
+  };
+
+  // show snackbar error updating patient
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true);
+
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnackbar(false);
+  };
+
+  // edit patient functionality
+
+  const dispatch = useDispatch();
+  const { selectedPatient, errorMessage, successMessage } = useSelector((state) => state.patients);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm();
 
   const onFormSubmit = handleSubmit((data) => {
-    console.log(data);
+    dispatch(updatePatient({ id: selectedPatient.id, ...data }));
 
-    reset();
+    setOpenSuccessSnackbar(true);
   });
 
-  const patient = {
-    id: 1,
-    fullName: 'Fabian Martinez',
-    dateOfBirth: '2001-05-24',
-    allergies: '',
-    locality: 'Chaco',
-  };
+  useEffect(() => {
+    if (errorMessage) {
+      setOpenErrorSnackbar(true);
+    } else {
+      setOpenErrorSnackbar(false);
+    }
+  }, [errorMessage]);
 
   return (
     <Grid
@@ -42,7 +71,7 @@ export const EditPage = () => {
           <Grid container gap={2}>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
-                defaultValue={patient.fullName}
+                defaultValue={selectedPatient.fullName}
                 label="Apellido y Nombre"
                 type="text"
                 variant="outlined"
@@ -71,7 +100,7 @@ export const EditPage = () => {
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <InputLabel htmlFor="date-of-birth">Fecha de nacimiento</InputLabel>
               <TextField
-                defaultValue={patient.dateOfBirth}
+                defaultValue={selectedPatient.dateOfBirth}
                 id="date-of-birth"
                 type="date"
                 InputLabelProps={{
@@ -95,7 +124,7 @@ export const EditPage = () => {
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
-                defaultValue={patient.allergies}
+                defaultValue={selectedPatient.allergies}
                 label="Opcional - Alergias"
                 type="text"
                 variant="outlined"
@@ -119,7 +148,7 @@ export const EditPage = () => {
 
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <TextField
-                defaultValue={patient.locality}
+                defaultValue={selectedPatient.locality}
                 label="Localidad"
                 type="text"
                 variant="outlined"
@@ -148,6 +177,7 @@ export const EditPage = () => {
             <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
               <Link to="/">
                 <Button
+                  onClick={() => dispatch(resetSelectedPatient())}
                   size="medium"
                   color="secondary"
                   variant="contained"
@@ -155,7 +185,7 @@ export const EditPage = () => {
                   sm={6}
                   sx={{ marginRight: 2 }}
                 >
-                  Cancelar
+                  Volver
                 </Button>
               </Link>
 
@@ -172,6 +202,36 @@ export const EditPage = () => {
             </Grid>
           </Grid>
         </form>
+
+        <Snackbar
+          open={openSuccessSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSuccessSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSuccessSnackbar}
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {successMessage}
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseErrorSnackbar}
+        >
+          <Alert
+            onClose={handleCloseErrorSnackbar}
+            severity="error"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
       </Grid>
     </Grid>
   );
