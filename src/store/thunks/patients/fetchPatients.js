@@ -18,10 +18,20 @@ export const fetchPatients = () => {
 
         dispatch(fetchPatientsSuccess(data));
       } else {
-        dispatch(fetchPatientsFailure(response.statusText));
+        dispatch(
+          fetchPatientsFailure(
+            'Se produjo un error al cargar los datos de los pacientes. Por favor, inténtelo de nuevo.'
+          )
+        );
+        console.error(response.statusText);
       }
     } catch (error) {
-      dispatch(fetchPatientsFailure('No se pudo realizar la petición: ' + error));
+      dispatch(
+        fetchPatientsFailure(
+          'Se produjo un error al cargar los datos de los pacientes. Por favor, inténtelo de nuevo.'
+        )
+      );
+      console.error('No se pudo realizar la petición: ' + error);
     }
   };
 };

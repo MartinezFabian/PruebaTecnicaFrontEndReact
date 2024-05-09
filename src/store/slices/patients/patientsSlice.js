@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const initialSelectedPatient = {
   fullName: '',
-  dateOfBirth: new Date().toISOString().split('T')[0],
+  dateOfBirth: '',
   allergies: '',
   locality: '',
 };

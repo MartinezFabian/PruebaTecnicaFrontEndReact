@@ -17,6 +17,8 @@ import {
   userTestData,
 } from '../../../fixtures/authFixtures';
 
+// NOTE: The test data used in this file are in "tests/fixtures/authFixtures.js"
+
 describe('tests in authSlice.js', () => {
   test('must have the correct initial state', () => {
     // ensure that the correct slice is accessed
