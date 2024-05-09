@@ -30,29 +30,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import moment from 'moment';
 import { usePatients } from '../hooks/usePatients';
 import { MessageWithoutElements } from '../components/MessageWithoutElements';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const HomePage = () => {
-  // show snackbar successfully deleted patient
-  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
-
-  const handleCloseSuccessSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSuccessSnackbar(false);
-  };
-
-  // show snackbar error deleted patient
-  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true);
-
-  const handleCloseErrorSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenErrorSnackbar(false);
-  };
+  const {
+    openSuccessSnackbar,
+    setOpenSuccessSnackbar,
+    handleCloseSuccessSnackbar,
+    openErrorSnackbar,
+    setOpenErrorSnackbar,
+    handleCloseErrorSnackbar,
+  } = useSnackbar();
 
   const {
     patientsList,

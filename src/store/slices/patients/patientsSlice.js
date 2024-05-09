@@ -47,7 +47,6 @@ export const patientsSlice = createSlice({
       });
 
       state.successMessage = 'Paciente actualizado correctamente';
-      state.selectedPatient = initialSelectedPatient;
       state.errorMessage = null;
     },
 

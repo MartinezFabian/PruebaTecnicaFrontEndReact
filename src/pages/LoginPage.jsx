@@ -20,18 +20,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { loginUser } from '../store/thunks/auth/loginUser';
 import { AUTH_STATUS } from '../store/slices/auth/authStatus';
+import { useSnackbar } from '../hooks/useSnackbar';
+import { resetErrorMessage } from '../store/slices/auth/authSlice';
 
 export const LoginPage = () => {
-  // error snackbar functionality
-  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
-
-  const handleCloseErrorSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenErrorSnackbar(false);
-  };
+  const { openErrorSnackbar, setOpenErrorSnackbar, handleCloseErrorSnackbar } = useSnackbar();
 
   const {
     register,
@@ -173,7 +166,11 @@ export const LoginPage = () => {
             <Grid container spacing={2} sx={{ marginBottom: 2, marginTop: 2 }}>
               <Grid item xs={12} sm={6} sx={{ order: { xs: 2, sm: 1 } }}>
                 <Link to="/register">
-                  <Button variant="contained" fullWidth>
+                  <Button
+                    onClick={() => dispatch(resetErrorMessage())}
+                    variant="contained"
+                    fullWidth
+                  >
                     Registrarte
                   </Button>
                 </Link>

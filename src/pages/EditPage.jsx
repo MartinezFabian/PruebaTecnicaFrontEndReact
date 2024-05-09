@@ -1,33 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert, Button, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { resetSelectedPatient, updatePatient } from '../store/slices/patients/patientsSlice';
 
 import { usePatients } from '../hooks/usePatients';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const EditPage = () => {
-  // show snackbar successfully updated patient
-  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
-
-  const handleCloseSuccessSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSuccessSnackbar(false);
-  };
-
-  // show snackbar error updating patient
-  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(true);
-
-  const handleCloseErrorSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenErrorSnackbar(false);
-  };
+  const {
+    openSuccessSnackbar,
+    setOpenSuccessSnackbar,
+    handleCloseSuccessSnackbar,
+    openErrorSnackbar,
+    setOpenErrorSnackbar,
+    handleCloseErrorSnackbar,
+  } = useSnackbar();
 
   // edit patient functionality
 

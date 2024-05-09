@@ -21,18 +21,10 @@ import { Link } from 'react-router-dom';
 import { registerUser } from '../store/thunks/auth/registerUser';
 import { AUTH_STATUS } from '../store/slices/auth/authStatus';
 import { resetErrorMessage } from '../store/slices/auth/authSlice';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const RegisterPage = () => {
-  // error snackbar functionality
-  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
-
-  const handleCloseErrorSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenErrorSnackbar(false);
-  };
+  const { openErrorSnackbar, setOpenErrorSnackbar, handleCloseErrorSnackbar } = useSnackbar();
 
   const {
     register,
