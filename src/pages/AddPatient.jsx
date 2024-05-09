@@ -100,6 +100,14 @@ export const AddPatient = () => {
                     value: true,
                     message: 'Debe seleccionar una fecha de nacimiento del paciente',
                   },
+                  validate: (value) => {
+                    const dateOfBirth = new Date(value);
+                    const currentDate = new Date();
+
+                    return dateOfBirth < currentDate
+                      ? true
+                      : 'La fecha de nacimiento no puede ser posterior a la fecha actual';
+                  },
                 })}
               />
 
