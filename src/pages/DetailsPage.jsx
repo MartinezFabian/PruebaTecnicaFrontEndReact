@@ -1,13 +1,12 @@
-import { Alert, Button, Grid, List, ListItem, ListItemText } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { resetSelectedPatient } from '../store/slices/patients/patientsSlice';
+import { Alert, Button, Grid, List, ListItem, ListItemText } from '@mui/material';
 import moment from 'moment';
+
 import { calculateAge } from '../utils/calculateAge';
+import { usePatients } from '../hooks/usePatients';
 
 export const DetailsPage = () => {
-  const dispatch = useDispatch();
-  const { selectedPatient, errorMessage } = useSelector((state) => state.patients);
+  const { selectedPatient, errorMessage, onResetSelectedPatient } = usePatients();
 
   return errorMessage ? (
     <Alert severity="error">{errorMessage}</Alert>
@@ -74,7 +73,7 @@ export const DetailsPage = () => {
 
         <Link to="/">
           <Button
-            onClick={() => dispatch(resetSelectedPatient())}
+            onClick={() => onResetSelectedPatient()}
             size="medium"
             color="secondary"
             variant="contained"

@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert, Button, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { resetSelectedPatient, updatePatient } from '../store/slices/patients/patientsSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+
+import { usePatients } from '../hooks/usePatients';
 
 export const EditPage = () => {
   // show snackbar successfully updated patient
@@ -30,8 +31,13 @@ export const EditPage = () => {
 
   // edit patient functionality
 
-  const dispatch = useDispatch();
-  const { selectedPatient, errorMessage, successMessage } = useSelector((state) => state.patients);
+  const {
+    selectedPatient,
+    errorMessage,
+    successMessage,
+    onSaveEditPatient,
+    onResetSelectedPatient,
+  } = usePatients();
 
   const {
     register,
@@ -40,7 +46,7 @@ export const EditPage = () => {
   } = useForm();
 
   const onFormSubmit = handleSubmit((data) => {
-    dispatch(updatePatient({ id: selectedPatient.id, ...data }));
+    onSaveEditPatient({ id: selectedPatient.id, ...data });
 
     setOpenSuccessSnackbar(true);
   });
@@ -177,7 +183,7 @@ export const EditPage = () => {
             <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
               <Link to="/">
                 <Button
-                  onClick={() => dispatch(resetSelectedPatient())}
+                  onClick={() => onResetSelectedPatient()}
                   size="medium"
                   color="secondary"
                   variant="contained"

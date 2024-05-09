@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { Alert, Button, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { addPatient } from '../store/slices/patients/patientsSlice';
-import { useEffect, useState } from 'react';
+
+import { usePatients } from '../hooks/usePatients';
 
 export const AddPatient = () => {
   // show snackbar successfully added patient
@@ -30,8 +31,7 @@ export const AddPatient = () => {
 
   // add patient functionality
 
-  const dispatch = useDispatch();
-  const { patientsList, errorMessage, successMessage } = useSelector((state) => state.patients);
+  const { patientsList, errorMessage, successMessage, onSaveNewPatient } = usePatients();
 
   const {
     register,
@@ -41,7 +41,7 @@ export const AddPatient = () => {
   } = useForm();
 
   const onFormSubmit = handleSubmit((data) => {
-    dispatch(addPatient({ id: patientsList.length + 1, ...data }));
+    onSaveNewPatient({ id: patientsList.length + 1, ...data });
 
     setOpenSuccessSnackbar(true);
     reset();

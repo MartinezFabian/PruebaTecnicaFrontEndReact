@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -27,10 +26,10 @@ import AddIcon from '@mui/icons-material/Add';
 import Fab from '@mui/material/Fab';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import RedoIcon from '@mui/icons-material/Redo';
-import { useDispatch, useSelector } from 'react-redux';
-import { deletePatient, setSelectedPatient } from '../store/slices/patients/patientsSlice';
+
 import moment from 'moment';
+import { usePatients } from '../hooks/usePatients';
+import { MessageWithoutElements } from '../components/MessageWithoutElements';
 
 export const HomePage = () => {
   // show snackbar successfully deleted patient
@@ -55,11 +54,16 @@ export const HomePage = () => {
     setOpenErrorSnackbar(false);
   };
 
-  const dispatch = useDispatch();
-
-  const { patientsList, isLoading, errorMessage, successMessage } = useSelector(
-    (state) => state.patients
-  );
+  const {
+    patientsList,
+    isLoading,
+    errorMessage,
+    successMessage,
+    onAddPatient,
+    onEditPatient,
+    onDeletePatient,
+    onDetailsPatient,
+  } = usePatients();
 
   //  patient list filter functionalities
   const [searchValue, setSearchValue] = useState('');
@@ -83,40 +87,20 @@ export const HomePage = () => {
       });
   }, [patientsList, searchValue]);
 
-  // navigation's and actions handlers functionalities
-
-  const navigate = useNavigate();
-
-  const onAddPatient = () => {
-    navigate('/add-patient');
-  };
-
-  const onEditPatient = (patient) => {
-    dispatch(setSelectedPatient(patient));
-
-    navigate(`/edit/${patient.id}`);
-  };
-
-  const onDetailsPatient = (patient) => {
-    dispatch(setSelectedPatient(patient));
-
-    navigate(`/details/${patient.id}`);
-  };
-
   const [showDialog, setShowDialog] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
 
-  const onDeletePatient = (id) => {
+  const onStartPatientElimination = (id) => {
     setIdToDelete(id);
     setShowDialog(true);
   };
 
-  const onConfirmDialog = () => {
-    dispatch(deletePatient(idToDelete));
+  const onConfirmDeleteDialog = () => {
+    onDeletePatient(idToDelete);
     setOpenSuccessSnackbar(true);
   };
 
-  const onCloseDialog = () => {
+  const onCloseDeleteDialog = () => {
     setShowDialog(false);
     setIdToDelete(null);
   };
@@ -194,7 +178,7 @@ export const HomePage = () => {
             size="small"
             color="error"
             startIcon={<DeleteIcon></DeleteIcon>}
-            onClick={() => onDeletePatient(row.id)}
+            onClick={() => onStartPatientElimination(row.id)}
           >
             Eliminar
           </Button>
@@ -250,22 +234,7 @@ export const HomePage = () => {
       {errorMessage ? (
         <Alert severity="error">{errorMessage}</Alert>
       ) : filteredPatientsList.length === 0 ? (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ minHeight: '50vh' }}
-        >
-          <Grid item xs={12}>
-            <Typography variant="h5">Agrega un nuevo paciente</Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <RedoIcon sx={{ fontSize: '120px', color: 'primary.main' }}></RedoIcon>
-          </Grid>
-        </Grid>
+        <MessageWithoutElements></MessageWithoutElements>
       ) : isLoading ? (
         <CircularProgress sx={{ margin: 'auto' }} color="primary" />
       ) : (
@@ -344,8 +313,8 @@ export const HomePage = () => {
         open={showDialog}
         title="¿Estas seguro de eliminar al paciente?"
         description="Si eliminas al paciente, no podrás recuperar los datos. Y perderás toda su información asociada."
-        onClose={onCloseDialog}
-        onConfirm={onConfirmDialog}
+        onClose={onCloseDeleteDialog}
+        onConfirm={onConfirmDeleteDialog}
       />
 
       <Snackbar
