@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialSelectedPatient = {
+export const initialSelectedPatient = {
   fullName: '',
   dateOfBirth: new Date().toISOString().split('T')[0],
   allergies: '',

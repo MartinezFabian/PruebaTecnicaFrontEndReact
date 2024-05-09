@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { usePatients } from '../hooks/usePatients';
 import { useSnackbar } from '../hooks/useSnackbar';
+import { initialSelectedPatient } from '../store/slices/patients/patientsSlice';
 
 export const EditPage = () => {
   const {
@@ -24,7 +25,15 @@ export const EditPage = () => {
     successMessage,
     onSaveEditPatient,
     onResetSelectedPatient,
+    navigate,
   } = usePatients();
+
+  // if no patient is selected, redirect to HomePage
+  useEffect(() => {
+    if (selectedPatient === initialSelectedPatient) {
+      navigate('/');
+    }
+  }, [selectedPatient]);
 
   const {
     register,

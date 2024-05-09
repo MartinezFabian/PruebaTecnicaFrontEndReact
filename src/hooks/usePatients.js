@@ -62,5 +62,6 @@ export const usePatients = () => {
     onDeletePatient,
     onDetailsPatient,
     onResetSelectedPatient,
+    navigate,
   };
 };

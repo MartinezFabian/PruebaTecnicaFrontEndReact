@@ -4,9 +4,18 @@ import moment from 'moment';
 
 import { calculateAge } from '../utils/calculateAge';
 import { usePatients } from '../hooks/usePatients';
+import { useEffect } from 'react';
+import { initialSelectedPatient } from '../store/slices/patients/patientsSlice';
 
 export const DetailsPage = () => {
-  const { selectedPatient, errorMessage, onResetSelectedPatient } = usePatients();
+  const { selectedPatient, errorMessage, onResetSelectedPatient, navigate } = usePatients();
+
+  // if no patient is selected, redirect to HomePage
+  useEffect(() => {
+    if (selectedPatient === initialSelectedPatient) {
+      navigate('/');
+    }
+  }, [selectedPatient]);
 
   return errorMessage ? (
     <Alert severity="error">{errorMessage}</Alert>

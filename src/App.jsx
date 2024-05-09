@@ -43,7 +43,7 @@ export const App = () => {
     return children;
   };
 
-  const RedirectToLogin = ({ children }) => {
+  const RedirectToLogin = () => {
     return <Navigate to="/login"></Navigate>;
   };
 
