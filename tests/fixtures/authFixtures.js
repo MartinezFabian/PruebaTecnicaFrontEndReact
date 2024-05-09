@@ -13,10 +13,16 @@ export const initialStateTest = {
 export const authenticatedState = {
   status: AUTH_STATUS.AUTHENTICATED,
   user: {
+    id: 1,
     fullName: 'Test',
     username: 'test',
-    id: 1,
   },
+  errorMessage: null,
+};
+
+export const notAuthenticatedState = {
+  status: AUTH_STATUS.NOT_AUTHENTICATED,
+  user: null,
   errorMessage: null,
 };
 
@@ -32,14 +38,8 @@ export const registerFailureState = {
   errorMessage: 'El nombre de usuario ya existe',
 };
 
-export const userDataLogin = {
+export const userTestData = {
+  id: 1,
+  fullName: 'Test',
   username: 'test',
-  password: '123456',
-};
-
-export const userDataRegister = {
-  fullName: 'Test 2',
-  username: 'test2',
-  password: '123456',
-  passwordRepeat: '123456',
 };

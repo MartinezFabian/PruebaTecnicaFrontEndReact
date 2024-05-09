@@ -1,4 +1,4 @@
-import { checkingCredentials, registerFailure, registerSuccess } from '../../slices/auth/authSlice';
+import { checkingCredentials, login, authFailed } from '../../slices/auth/authSlice';
 import { AUTH_STATUS } from '../../slices/auth/authStatus';
 
 export const registerUser = (userData) => {
@@ -30,7 +30,7 @@ export const registerUser = (userData) => {
         id: newUser.id,
       };
 
-      dispatch(registerSuccess(userWithoutPassword));
+      dispatch(login(userWithoutPassword));
 
       localStorage.setItem(
         'authStatus',
@@ -41,7 +41,7 @@ export const registerUser = (userData) => {
         })
       );
     } catch (error) {
-      dispatch(registerFailure(error.message));
+      dispatch(authFailed(error.message));
     }
   };
 };
