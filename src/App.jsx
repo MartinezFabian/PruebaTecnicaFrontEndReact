@@ -12,12 +12,15 @@ import { useEffect } from 'react';
 import { fetchPatients } from './store/thunks/patients/fetchPatients';
 
 export const App = () => {
+  // status of the authentication
   const { status } = useSelector((state) => state.auth);
 
+  // check if the user is authenticated
   const currentUser = status === AUTH_STATUS.AUTHENTICATED ? true : false;
 
   const dispatch = useDispatch();
 
+  // fetch patients when the user is authenticated
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchPatients());
@@ -38,6 +41,10 @@ export const App = () => {
     }
 
     return children;
+  };
+
+  const RedirectToLogin = ({ children }) => {
+    return <Navigate to="/login"></Navigate>;
   };
 
   const router = createBrowserRouter([
@@ -82,6 +89,10 @@ export const App = () => {
           <RegisterPage></RegisterPage>
         </AuthProtectedRoute>
       ),
+    },
+    {
+      path: '*',
+      element: <RedirectToLogin></RedirectToLogin>,
     },
   ]);
 
