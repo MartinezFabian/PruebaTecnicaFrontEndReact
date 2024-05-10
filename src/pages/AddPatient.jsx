@@ -101,7 +101,7 @@ export const AddPatient = () => {
                     message: 'Debe seleccionar una fecha de nacimiento del paciente',
                   },
                   validate: (value) => {
-                    const dateOfBirth = new Date(value);
+                    const dateOfBirth = new Date(value + 'T00:00:00-03:00');
                     const currentDate = new Date();
 
                     return dateOfBirth < currentDate
